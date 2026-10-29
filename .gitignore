@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+logs/
+.log
+npm-debug.log
+
+.DS_store
+Thumbs.db
+coverage/
