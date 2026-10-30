@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum MessageRole {
+  system
+  user
+  assistant
+  tool
+}
+
+model Conversation {
+  id            String    @id @default(cuid())
+  title         String?
+  modelProvider String    @default("ollama")
+  model         String    @default("qwen3:8b")
+  systemPrompt  String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  archivedAt    DateTime?
+
+  messages      Message[]
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  sequence       Int
+  role           MessageRole
+  content        String
+  metadata       Json?
+
+  createdAt      DateTime      @default(now())
+
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, sequence])
+  @@index([conversationId, createdAt])
+}

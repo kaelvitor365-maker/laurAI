@@ -12,7 +12,13 @@ logs/
 npm-debug.log
 node_modules/
 
+data/
+/src/generated/
+/.claude/
+/.windsurf/
+/.agents/
 .DS_store
 Thumbs.db
 coverage/
 /dist/
+/generated/prisma

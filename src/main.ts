@@ -1,18 +1,25 @@
-import process from "node:process";
-import { bootstrap }from "./app/bootstrap.js";
+import { bootstrap } from "./app/bootstrap.js";
 
 const main = async (): Promise<void> => {
     const app = await bootstrap();
 
-    console.log(`database opened: ${app.db.open}`);
+    try {
+        console.log(`database opened: ${app.db.open}`);
 
-    process.once("exit", () => {
-        if(app.db.open)
+        // Futuramente, iniciaremos a interface CLI aqui.
+        // Ela ficará ativa enquanto o usuário estiver conversando.
+    } finally {
+        if (app.db.open) {
             app.db.close();
-    })
+        }
+
+        await app.prisma.$disconnect();
+
+        console.log("database connections closed");
+    }
 };
 
 main().catch((error: unknown) => {
-    console.log(`Fatal error to start LauraAI: ${error}`);
+    console.error("Fatal error to start LaurAI:", error);
     process.exitCode = 1;
 });
