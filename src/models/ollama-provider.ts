@@ -22,13 +22,15 @@ export class OllamaProvider implements ModelProvider {
         model = "qwen3:8b",
         messages,
         think = false,
-        temperature }: GenerateRequest
-    ): Promise<GenerateResponse> {
+        temperature,
+        signal
+    }: GenerateRequest): Promise<GenerateResponse> {
         const response = await fetch(`${this.baseUrl}/api/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
+            signal,
             body: JSON.stringify({
                 model,
                 messages,

@@ -6,6 +6,7 @@ import type {ConversationService } from "../conversation/conversation-services.j
 export interface SendMessageInput {
     conversationId: string;
     content: string;
+    signal?: AbortSignal;
 }
 
 export class Orchestrator {
@@ -16,7 +17,7 @@ export class Orchestrator {
         private readonly conversations: ConversationService
     ) {}
 
-    async send({conversationId, content}: SendMessageInput){
+    async send({conversationId, content, signal}: SendMessageInput){
         const conversation = await this.conversations.findById(conversationId);
 
         if(!conversation)
@@ -35,7 +36,8 @@ export class Orchestrator {
 
         const response = await this.model.generate({
             model: conversation.model,
-            messages: context
+            messages: context,
+            signal
         });
 
         const assistantMessage = await this.messages.create({

@@ -5,7 +5,7 @@ import { MessageService } from "../messages/message-service.js";
 import { ContextBuilder } from "../agent/context-builder.js";
 import { Orchestrator } from "../agent/orchestrator.js"
 import { OllamaProvider } from "../models/ollama-provider.js";
-
+import { AgentRuntime } from "../agent/runtime.js";
 
 export type AppContext = {
     db: ReturnType<typeof createDatabase>;
@@ -14,6 +14,7 @@ export type AppContext = {
     messages: MessageService;
     contextBuilder: ContextBuilder;
     orchestrator: Orchestrator;
+    runtime: AgentRuntime;
 };
 
 export const bootstrap = async (): Promise<AppContext> => {
@@ -41,6 +42,7 @@ export const bootstrap = async (): Promise<AppContext> => {
             ollama,
             conversations
         )
+        const runtime = new AgentRuntime(orchestrator);
 
         console.log("prisma conectado");
 
@@ -50,7 +52,8 @@ export const bootstrap = async (): Promise<AppContext> => {
             conversations,
             messages,
             contextBuilder,
-            orchestrator
+            orchestrator,
+            runtime
         };
     } catch (error: unknown) {
         db.close();

@@ -1,3 +1,5 @@
+
+
 export interface ModelMessage {
     role: "system" | "user" | "assistant";
     content: string;
@@ -8,6 +10,7 @@ export interface GenerateRequest {
     messages: ModelMessage[];
     temperature?: number;
     think?: boolean;
+    signal?: AbortSignal;
 }
 
 export interface GenerateResponse {
