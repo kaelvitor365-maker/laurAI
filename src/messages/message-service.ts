@@ -8,6 +8,11 @@ export type CreateMessageInput = {
     metadata?: Prisma.InputJsonValue | null;
 }
 
+export interface FindMessageOptions {
+    limit?: number;
+    beforeSequence?: number;
+}
+
 export class MessageService {
     constructor(
         private readonly prisma: PrismaClient
@@ -38,6 +43,40 @@ export class MessageService {
                     sequence
                 }
             });
+        });
+    }
+
+    async findById(id: string){
+        return this.prisma.message.findUnique({
+            where: {
+                id
+            }
+        });
+    }
+
+    async findByConversation(
+        conversationId: string,
+        {
+            limit = 50,
+            beforeSequence
+        }: FindMessageOptions = {}
+    ) {
+        if(!Number.isInteger(limit) || limit < 1 || limit > 500)
+            throw new RangeError("Limit must be between 1 and 500")
+
+        return this.prisma.message.findMany({
+            where: {
+                conversationId,
+                ...(beforeSequence !== undefined &&{
+                    sequence: {
+                        lt: beforeSequence
+                    }
+                })
+            },
+            orderBy: {
+                sequence: "desc"
+            },
+            take: limit
         });
     }
 }
